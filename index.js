@@ -22,6 +22,22 @@ const app = express();
 app.listen(3400);
 
 
+app.get("/users/:id",async (req, res)=>{
+
+    try {
+        await dataSource.initialize();
+        let users =  dataSource.getRepository('users');
+        let user = await users.find({where:{id:req.params.id}});
+        console.log(user);
+        await  dataSource.destroy();
+        res.send(user);
+
+    } catch (error) {
+        res.send(error);
+    }
+
+
+});
 
 app.get("/users",async (req, res)=>{
 
@@ -29,7 +45,10 @@ app.get("/users",async (req, res)=>{
         await dataSource.initialize();
         let users =  dataSource.getRepository('users');
         users = await users.find();
+        console.log(users);
+        await  dataSource.destroy();
         res.send(users);
+       
 
     } catch (error) {
         res.send(error);
@@ -39,7 +58,7 @@ app.get("/users",async (req, res)=>{
 });
 
 
-app.get("/user/:name/:email",async (req, res)=>{
+app.get("/users/:name/:email",async (req, res)=>{
 
     try {
         await dataSource.initialize();
@@ -47,7 +66,7 @@ app.get("/user/:name/:email",async (req, res)=>{
         let user = req.params;
     
         let u = await users.save(user);
-
+        await  dataSource.destroy();
         res.send(u);
 
     } catch (error) {
